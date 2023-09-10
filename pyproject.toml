@@ -6,23 +6,24 @@ authors = ["Miroslav Mlynarik <miroslav.mlynarik@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.12"
+python = "3.9.5"
+numpy = "1.20.0"
 torch = "2.0.0"
-pandas = "2.0.1"
-datasets = {extras = ["audio"], version="2.14.0"}
-huggingface-download-cli = "1.0.3"
+torchaudio = "2.0.1"
 lightning = "2.0.3"
 transformers = "4.30.2"
-apex = "0.9.10.dev0"
-jsonargparse = {extras = ["signatures"], version = "4.23.1"}
 wandb = "0.15.9"
-llvmlite = "0.40.1"
+jsonargparse = "4.23.1"
+huggingface-download-cli = "1.0.3"
+datasets = {version = "2.14.0", extras = ["audio"]}
+src = {path = "src", develop = true}
+numba = "0.56.0"
+jsonlines = "^4.0.0"
 
 [tool.poetry.group.dev.dependencies]
-pycodestyle = "2.10.0"
 black = "23.3.0"
+pycodestyle = "2.10.0"
 pre-commit = "2.20.0"
-src = {path = "src", develop = true}
 
 [build-system]
 requires = ["poetry-core"]
