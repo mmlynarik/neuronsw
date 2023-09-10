@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "pointer-generator"
+version = "0.1.0"
+description = ""
+authors = ["Miroslav Mlynarik <mmlynarik@sk.uss.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.12"
+torch = "2.0.0"
+pandas = "2.0.1"
+datasets = {extras = ["audio"], version = "2.12.0"}
+huggingface-download-cli = "1.0.3"
+lightning = "2.0.3"
+transformers = "4.30.2"
+apex = "0.9.10.dev0"
+jsonargparse = {extras = ["signatures"], version = "4.23.1"}
+wandb = "0.15.9"
+
+
+[tool.poetry.group.dev.dependencies]
+pycodestyle = "2.10.0"
+black = "23.3.0"
+pre-commit = "2.20.0"
+src = {path = "src", develop = true}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 110
