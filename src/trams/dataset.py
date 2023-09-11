@@ -6,6 +6,7 @@ import torchaudio
 import pandas as pd
 from torchaudio.backend.common import AudioMetaData
 from datasets import load_dataset, load_from_disk, Dataset
+from IPython.display import display
 
 from trams.config import RAW_DATA_DIR_TRAIN, ARROW_DATA_DIR
 
@@ -48,7 +49,7 @@ def process_dataset(dataset: Dataset):
 def print_labels_statistics(train_dataset: Dataset):
     train_dataset.set_format("pandas")
     df = pd.concat([train_dataset["label_name"], train_dataset["label"]], axis=1)
-    print(df.groupby(["label_name", "label"]).agg(count=("label", "count")))
+    display(df.groupby(["label_name", "label"]).agg(count=("label", "count")))
 
 
 def print_metadata_statistics(train_dataset: Dataset):
@@ -57,5 +58,6 @@ def print_metadata_statistics(train_dataset: Dataset):
         [train_dataset["sample_rate"], train_dataset["bits_per_sample"], train_dataset["num_channels"]],
         axis=1,
     )
-    print(df.groupby(["sample_rate", "bits_per_sample", "num_channels"]).agg(count=("sample_rate", "count")))
-
+    display(
+        df.groupby(["sample_rate", "bits_per_sample", "num_channels"]).agg(count=("sample_rate", "count"))
+    )
