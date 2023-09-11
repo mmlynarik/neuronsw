@@ -4,7 +4,7 @@ from pathlib import Path
 
 import torchaudio
 from torchaudio.backend.common import AudioMetaData
-from datasets import load_dataset, load_from_disk
+from datasets import load_dataset, load_from_disk, Dataset
 
 from trams.config import RAW_DATA_DIR_TRAIN, ARROW_DATA_DIR
 
@@ -35,5 +35,16 @@ def load_dataset_from_wav_files():
     return dataset
 
 
-dataset = load_dataset_from_wav_files()
-# print(dataset["train"].features["label"].int2str)
+def get_label_names(batch):
+    return {"label_name": [dataset["train"].features["label"].int2str(label) for label in batch["label"]]}
+
+
+def process_dataset(dataset: Dataset):
+    dataset = dataset.map(get_label_names, batched=True)
+    return dataset
+
+
+if __name__ == "__main__":
+    dataset = load_dataset_from_wav_files()
+    processed_dataset = process_dataset(dataset)
+    print(processed_dataset)
