@@ -11,7 +11,7 @@ from IPython.display import display
 from trams.config import RAW_DATA_DIR_TRAIN, ARROW_DATA_DIR
 
 
-def load_dataset_from_wav_files(test_split_pct: float, cached: bool = True):
+def load_dataset_from_wav_files(validation_pct: float, cached: bool = True):
     if ARROW_DATA_DIR.exists() and any(ARROW_DATA_DIR.iterdir()) and cached:
         return load_from_disk(ARROW_DATA_DIR)
 
@@ -33,7 +33,7 @@ def load_dataset_from_wav_files(test_split_pct: float, cached: bool = True):
                 writer.write(metadata)
 
     dataset = load_dataset("audiofolder", data_dir=RAW_DATA_DIR_TRAIN, drop_labels=False)
-    dataset = dataset["train"].train_test_split(test_split_pct, stratify_by_column="label", seed=100)
+    dataset = dataset["train"].train_test_split(validation_pct, stratify_by_column="label", seed=100)
     dataset = DatasetDict({"train": dataset["train"], "validation": dataset["test"]})
     dataset.save_to_disk(ARROW_DATA_DIR)
     return dataset
