@@ -1,11 +1,13 @@
 .venv
 .vscode
+
 *.pyc
 **/*.egg-info
+
 data/
-lightning_logs
+lightning_logs/
 wandb/
+
 .env
-email-ad-summarization/
 *.wav
 *.mp4
