@@ -1,6 +1,7 @@
 import os
 import jsonlines
 from pathlib import Path
+from typing import Any
 
 import torchaudio
 import pandas as pd
@@ -40,11 +41,18 @@ def load_dataset_from_wav_files(validation_pct: float, cached: bool = True):
 
 
 def process_dataset(dataset: Dataset):
-    def get_label_names(batch):
+    def add_label_name(batch: dict[str, Any]):
         train_dataset: Dataset = dataset["train"]
         return {"label_name": [train_dataset.features["label"].int2str(label) for label in batch["label"]]}
 
-    dataset = dataset.map(get_label_names, batched=True)
+    def flatten_example_dict(batch: dict[str, Any]):
+        return {
+            "audio": [(items["array"]) for items in batch["audio"]],
+            "path": [items["path"] for items in batch["audio"]],
+        }
+
+    dataset = dataset.map(add_label_name, batched=True)
+    dataset = dataset.map(flatten_example_dict, batched=True, remove_columns=["audio"])
     return dataset
 
 
