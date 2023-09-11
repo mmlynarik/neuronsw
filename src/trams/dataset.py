@@ -51,7 +51,11 @@ def print_labels_statistics(train_dataset: Dataset):
     print(df.groupby(["label_name", "label"]).agg(count=("label", "count")))
 
 
-if __name__ == "__main__":
-    dataset = load_dataset_from_wav_files()
-    processed_dataset = process_dataset(dataset)
-    print_labels_statistics(processed_dataset["train"])
+def print_metadata_statistics(train_dataset: Dataset):
+    train_dataset.set_format("pandas")
+    df = pd.concat(
+        [train_dataset["sample_rate"], train_dataset["bits_per_sample"], train_dataset["num_channels"]],
+        axis=1,
+    )
+    print(df.groupby(["sample_rate", "bits_per_sample", "num_channels"]).agg(count=("sample_rate", "count")))
+

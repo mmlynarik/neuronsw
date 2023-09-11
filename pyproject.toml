@@ -19,6 +19,9 @@ datasets = {version = "2.14.0", extras = ["audio"]}
 src = {path = "src", develop = true}
 numba = "0.56.0"
 jsonlines = "^4.0.0"
+ipython = "^8.15.0"
+ipykernel = "^6.25.2"
+ipywidgets = "^8.1.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "23.3.0"
