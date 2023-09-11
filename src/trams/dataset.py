@@ -3,6 +3,7 @@ import jsonlines
 from pathlib import Path
 
 import torchaudio
+import pandas as pd
 from torchaudio.backend.common import AudioMetaData
 from datasets import load_dataset, load_from_disk, Dataset
 
@@ -35,16 +36,22 @@ def load_dataset_from_wav_files():
     return dataset
 
 
-def get_label_names(batch):
-    return {"label_name": [dataset["train"].features["label"].int2str(label) for label in batch["label"]]}
-
-
 def process_dataset(dataset: Dataset):
+    def get_label_names(batch):
+        train_dataset: Dataset = dataset["train"]
+        return {"label_name": [train_dataset.features["label"].int2str(label) for label in batch["label"]]}
+
     dataset = dataset.map(get_label_names, batched=True)
     return dataset
+
+
+def print_labels_statistics(train_dataset: Dataset):
+    train_dataset.set_format("pandas")
+    df = pd.concat([train_dataset["label_name"], train_dataset["label"]], axis=1)
+    print(df.groupby(["label_name", "label"]).agg(count=("label", "count")))
 
 
 if __name__ == "__main__":
     dataset = load_dataset_from_wav_files()
     processed_dataset = process_dataset(dataset)
-    print(processed_dataset)
+    print_labels_statistics(processed_dataset["train"])
