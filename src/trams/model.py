@@ -71,7 +71,7 @@ class AudioClassifier(nn.Module):
         self.dense = nn.Linear(in_features=dense_in_features, out_features=config.num_classes)
 
     def forward(self, inputs: dict[str, Any]) -> pt.Tensor:
-        x = pt.unsqueeze(inputs["spectrogram"], 1)
+        x = pt.unsqueeze(inputs, 1)
         for block in self.convolutions:
             x = block(x)
         x = self.average_pooling(x)
@@ -88,29 +88,29 @@ class TramsAudioClassifier(LightningModule):
         self.learning_rate = config.learning_rate
         self.model = AudioClassifier(config)
         self.save_hyperparameters()
-        self.metrics = {"acc": Accuracy("multiclass", num_classes=config.num_classes)}
+        self.metrics = {"accuracy": Accuracy("multiclass", num_classes=config.num_classes).to(device='cuda')}
 
     def forward(self, batch: pt.Tensor) -> pt.Tensor:
         return self.model(batch)
 
     def training_step(self, batch: dict[str, Any], _: int) -> STEP_OUTPUT:
-        logits = self.model(batch)
+        logits = self.model(batch["spectrogram"])
         labels = batch["label"]
         loss = nn.functional.cross_entropy(logits, labels)
         _, preds = pt.max(logits, 1)
-        acc = self.metrics["acc"](preds, labels)
+        accuracy = self.metrics["accuracy"](preds, labels)
         self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
-        self.log("train_acc", acc, on_step=False, on_epoch=True, logger=True)
+        self.log("train_accuracy", accuracy, on_step=False, on_epoch=True, logger=True)
         return loss
 
     def validation_step(self, batch: dict[str, Any], _: int) -> STEP_OUTPUT:
-        logits = self.model(batch)
+        logits = self.model(batch["spectrogram"])
         labels = batch["label"]
         loss = nn.functional.cross_entropy(logits, labels)
         _, preds = pt.max(logits, 1)
-        acc = self.metrics["acc"](preds, labels)
+        accuracy = self.metrics["accuracy"](preds, labels)
         self.log("val_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
-        self.log("val_acc", acc, on_step=False, on_epoch=True, logger=True)
+        self.log("val_accuracy", accuracy, on_step=False, on_epoch=True, logger=True)
         return loss
 
     def test_step(self, batch: dict[str, Any], _: int) -> STEP_OUTPUT:
