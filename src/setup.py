@@ -25,10 +25,9 @@ setup(
     long_description_content_type="text/markdown",
     install_requires=[],
     zip_safe=False,
-    # entry_points={
-    #     "console_scripts": [
-    #         "train_tokenizer=summarization.entrypoints.train_tokenizer:main",
-    #         "train_model=summarization.entrypoints.train_model:main",
-    #     ]
-    # },
+    entry_points={
+        "console_scripts": [
+            "train_model=trams.train_model:main",
+        ]
+    },
 )

@@ -12,3 +12,4 @@ wandb/
 *.wav
 *.mp4
 build/
+trams-audio-classification/
