@@ -11,3 +11,4 @@ wandb/
 .env
 *.wav
 *.mp4
+build/

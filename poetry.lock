@@ -393,6 +393,14 @@ python-versions = "*"
 six = ">=1.4.0"
 
 [[package]]
+name = "docstring-parser"
+version = "0.15"
+description = "Parse Python docstrings in reST, Google and Numpydoc format"
+category = "main"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[[package]]
 name = "exceptiongroup"
 version = "1.1.3"
 description = "Backport of PEP 654 (exception groups)"
@@ -605,6 +613,21 @@ perf = ["ipython"]
 testing = ["flufl.flake8", "importlib-resources (>=1.3)", "packaging", "pyfakefs", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-mypy (>=0.9.1)", "pytest-perf (>=0.9.2)", "pytest-ruff"]
 
 [[package]]
+name = "importlib-resources"
+version = "6.0.1"
+description = "Read resources from Python packages"
+category = "main"
+optional = false
+python-versions = ">=3.8"
+
+[package.dependencies]
+zipp = {version = ">=3.1.0", markers = "python_version < \"3.10\""}
+
+[package.extras]
+docs = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx (>=3.5)", "sphinx-lint"]
+testing = ["pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-mypy (>=0.9.1)", "pytest-ruff"]
+
+[[package]]
 name = "inquirer"
 version = "3.1.3"
 description = "Collection of common interactive command line user interfaces, based on Inquirer.js"
@@ -761,14 +784,17 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "jsonargparse"
-version = "4.23.1"
+version = "4.24.1"
 description = "Implement minimal boilerplate CLIs derived from type hints and parse from command line, config files and environment variables."
 category = "main"
 optional = false
 python-versions = ">=3.6"
 
 [package.dependencies]
+docstring-parser = {version = ">=0.15", optional = true, markers = "extra == \"signatures\""}
 PyYAML = ">=3.13"
+typeshed-client = {version = ">=2.1.0", optional = true, markers = "extra == \"signatures\""}
+typing-extensions = {version = ">=3.10.0.0", optional = true, markers = "python_version < \"3.10\" and extra == \"typing-extensions\""}
 
 [package.extras]
 all = ["jsonargparse[argcomplete]", "jsonargparse[fsspec]", "jsonargparse[jsonnet]", "jsonargparse[jsonschema]", "jsonargparse[omegaconf]", "jsonargparse[reconplogger]", "jsonargparse[ruyaml]", "jsonargparse[signatures]", "jsonargparse[typing-extensions]", "jsonargparse[urls]"]
@@ -2226,6 +2252,17 @@ tests = ["autopep8", "flake8", "isort", "numpy", "pytest", "scipy (>=1.7.1)"]
 tutorials = ["matplotlib", "pandas", "tabulate"]
 
 [[package]]
+name = "typeshed-client"
+version = "2.3.0"
+description = "A library for accessing stubs in typeshed."
+category = "main"
+optional = false
+python-versions = ">=3.7"
+
+[package.dependencies]
+importlib-resources = ">=1.4.0"
+
+[[package]]
 name = "typing-extensions"
 version = "4.7.1"
 description = "Backported and Experimental Type Hints for Python 3.7+"
@@ -2402,7 +2439,7 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "1.1"
 python-versions = "3.9.5"
-content-hash = "111e8f79495b387eb6dbafb222a4a663aef75c4472c5d67a63981012ba8fbb96"
+content-hash = "7a3dda935e6e9aa9306870d003f3048d41c0572531083537befece077983bc70"
 
 [metadata.files]
 aiohttp = [
@@ -2810,6 +2847,10 @@ docker-pycreds = [
     {file = "docker-pycreds-0.4.0.tar.gz", hash = "sha256:6ce3270bcaf404cc4c3e27e4b6c70d3521deae82fb508767870fdbf772d584d4"},
     {file = "docker_pycreds-0.4.0-py2.py3-none-any.whl", hash = "sha256:7266112468627868005106ec19cd0d722702d2b7d5912a28e19b826c3d37af49"},
 ]
+docstring-parser = [
+    {file = "docstring_parser-0.15-py3-none-any.whl", hash = "sha256:d1679b86250d269d06a99670924d6bce45adc00b08069dae8c47d98e89b667a9"},
+    {file = "docstring_parser-0.15.tar.gz", hash = "sha256:48ddc093e8b1865899956fcc03b03e66bb7240c310fac5af81814580c55bf682"},
+]
 exceptiongroup = [
     {file = "exceptiongroup-1.1.3-py3-none-any.whl", hash = "sha256:343280667a4585d195ca1cf9cef84a4e178c4b6cf2274caef9859782b567d5e3"},
     {file = "exceptiongroup-1.1.3.tar.gz", hash = "sha256:097acd85d473d75af5bb98e41b61ff7fe35efe6675e4f9370ec6ec5126d160e9"},
@@ -2928,6 +2969,10 @@ importlib-metadata = [
     {file = "importlib_metadata-6.8.0-py3-none-any.whl", hash = "sha256:3ebb78df84a805d7698245025b975d9d67053cd94c79245ba4b3eb694abe68bb"},
     {file = "importlib_metadata-6.8.0.tar.gz", hash = "sha256:dbace7892d8c0c4ac1ad096662232f831d4e64f4c4545bd53016a3e9d4654743"},
 ]
+importlib-resources = [
+    {file = "importlib_resources-6.0.1-py3-none-any.whl", hash = "sha256:134832a506243891221b88b4ae1213327eea96ceb4e407a00d790bb0626f45cf"},
+    {file = "importlib_resources-6.0.1.tar.gz", hash = "sha256:4359457e42708462b9626a04657c6208ad799ceb41e5c58c57ffa0e6a098a5d4"},
+]
 inquirer = [
     {file = "inquirer-3.1.3-py3-none-any.whl", hash = "sha256:a7441fd74d06fcac4385218a1f5e8703f7a113f7944e01af47b8c58e84f95ce5"},
     {file = "inquirer-3.1.3.tar.gz", hash = "sha256:aac309406f5b49d4b8ab7c6872117f43bf082a552dc256aa16bc95e16bb58bec"},
@@ -2965,8 +3010,8 @@ joblib = [
     {file = "joblib-1.3.2.tar.gz", hash = "sha256:92f865e621e17784e7955080b6d042489e3b8e294949cc44c6eac304f59772b1"},
 ]
 jsonargparse = [
-    {file = "jsonargparse-4.23.1-py3-none-any.whl", hash = "sha256:225a401cb0e0ed8ed65f4557f8cc70b3a53d8aaf98c8676dd32cb9556794d406"},
-    {file = "jsonargparse-4.23.1.tar.gz", hash = "sha256:f3bb4f52502193d395b9dc3ae20cf9b375226438b9140b6a8ad4ee3804441150"},
+    {file = "jsonargparse-4.24.1-py3-none-any.whl", hash = "sha256:6d7659d7c3eb6a4fd51fafa1e4018c0f6e8fbdad8dec7b087a996b87d7a9d03e"},
+    {file = "jsonargparse-4.24.1.tar.gz", hash = "sha256:48e367c5a4dc6a0c3d0a28bb1937b8421bc2fce920dbc162a5a0edac643d8784"},
 ]
 jsonlines = [
     {file = "jsonlines-4.0.0-py3-none-any.whl", hash = "sha256:185b334ff2ca5a91362993f42e83588a360cf95ce4b71a73548502bda52a7c55"},
@@ -4286,6 +4331,10 @@ triton = [
     {file = "triton-2.0.0-pp37-pypy37_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:bcd9be5d0c2e45d2b7e6ddc6da20112b6862d69741576f9c3dbaf941d745ecae"},
     {file = "triton-2.0.0-pp38-pypy38_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:42a0d2c3fc2eab4ba71384f2e785fbfd47aa41ae05fa58bf12cb31dcbd0aeceb"},
     {file = "triton-2.0.0-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:52c47b72c72693198163ece9d90a721299e4fb3b8e24fd13141e384ad952724f"},
+]
+typeshed-client = [
+    {file = "typeshed_client-2.3.0-py3-none-any.whl", hash = "sha256:27976287e0682be3005233f08f6f3cedf0c496413bcb213378f46e08798988c4"},
+    {file = "typeshed_client-2.3.0.tar.gz", hash = "sha256:e2734755f93a0b6c1da8daad11670c75a36583d889d4d7b110eb882765b8bced"},
 ]
 typing-extensions = [
     {file = "typing_extensions-4.7.1-py3-none-any.whl", hash = "sha256:440d5dd3af93b060174bf433bccd69b0babc3b15b1a8dca43789fd7f61514b36"},
