@@ -7,7 +7,7 @@ from torch import nn
 from lightning.pytorch import LightningModule
 from lightning.pytorch.loggers.wandb import WandbLogger
 from lightning.pytorch.utilities.types import STEP_OUTPUT
-from torch.nn.functional import nll_loss
+from torchmetrics import Accuracy
 
 
 Device = Literal["cuda", "cpu"]
@@ -88,21 +88,29 @@ class TramsAudioClassifier(LightningModule):
         self.learning_rate = config.learning_rate
         self.model = AudioClassifier(config)
         self.save_hyperparameters()
-        self.metrics = {}
+        self.metrics = {"acc": Accuracy("multiclass", num_classes=config.num_classes)}
 
     def forward(self, batch: pt.Tensor) -> pt.Tensor:
         return self.model(batch)
 
     def training_step(self, batch: dict[str, Any], _: int) -> STEP_OUTPUT:
-        outputs = self.model(batch)
-        loss = nn.functional.cross_entropy(outputs, batch["label"])
+        logits = self.model(batch)
+        labels = batch["label"]
+        loss = nn.functional.cross_entropy(logits, labels)
+        _, preds = pt.max(logits, 1)
+        acc = self.metrics["acc"](preds, labels)
         self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        self.log("train_acc", acc, on_step=False, on_epoch=True, logger=True)
         return loss
 
     def validation_step(self, batch: dict[str, Any], _: int) -> STEP_OUTPUT:
-        outputs = self.model(batch)
-        loss = nn.functional.cross_entropy(outputs, batch["label"])
+        logits = self.model(batch)
+        labels = batch["label"]
+        loss = nn.functional.cross_entropy(logits, labels)
+        _, preds = pt.max(logits, 1)
+        acc = self.metrics["acc"](preds, labels)
         self.log("val_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        self.log("val_acc", acc, on_step=False, on_epoch=True, logger=True)
         return loss
 
     def test_step(self, batch: dict[str, Any], _: int) -> STEP_OUTPUT:
