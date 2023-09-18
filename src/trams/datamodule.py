@@ -77,7 +77,7 @@ class TramsDataModule(LightningDataModule):
         pass
 
 
-if __name__ == "__main__":
+def datamodule_sanity_check():
     dm = TramsDataModule(batch_size=16, validation_split=0.1)
     dm.prepare_data()
     dm.setup()
@@ -86,3 +86,7 @@ if __name__ == "__main__":
         if step == 0:
             print(batch)
             break
+
+
+if __name__ == "__main__":
+    datamodule_sanity_check()
