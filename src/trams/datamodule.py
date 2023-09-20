@@ -1,4 +1,6 @@
 import logging
+import os
+import shutil
 from pathlib import Path
 from typing import Optional
 
@@ -28,10 +30,14 @@ class TramsDataModule(LightningDataModule):
         self.raw_data_dir = raw_data_dir
         self.arrow_data_dir = arrow_data_dir
 
-    def prepare_data(self) -> DatasetDict:
+    def prepare_data(self, use_cache: bool = True) -> DatasetDict:
         if Path(self.arrow_data_dir / "dataset_dict.json").exists():
-            log.info(f"Processed dataset already exists in {self.arrow_data_dir} folder.")
-            return load_from_disk(self.arrow_data_dir)
+            if use_cache:
+                log.info(f"Processed dataset already exists in {self.arrow_data_dir} folder.")
+                return load_from_disk(self.arrow_data_dir)
+            else:
+                shutil.rmtree(ARROW_DATA_DIR)
+                os.makedirs(ARROW_DATA_DIR)
 
         if not self.raw_data_dir.exists():
             log.error(f"Raw wav files were not found. Please supply them in {self.raw_data_dir}")

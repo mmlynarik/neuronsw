@@ -13,4 +13,4 @@ NUM_FFT = 1024
 NUM_MELS = 64
 MAX_DB = 90
 
-TRAINDED_MODEL_PATH = ROOT_DIR / "src" / "trams" / "trained_model" / "model.ckpt"
+TRAINED_MODEL_PATH = ROOT_DIR / "src" / "trams" / "trained_model" / "model.ckpt"

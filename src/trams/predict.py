@@ -13,9 +13,10 @@ from trams.config import (
     MAX_DB,
     MAX_LENGTH_SECS,
     ONE_TENTH_SEC,
-    TRAINDED_MODEL_PATH,
+    TRAINED_MODEL_PATH,
 )
 from trams.model import TramsAudioClassifier, ModelConfig
+from trams.datamodule import TramsDataModule
 
 
 def predict_trams_from_wav(input_wav: Path, output_csv: Path):
@@ -35,7 +36,7 @@ def predict_trams_from_wav(input_wav: Path, output_csv: Path):
     offset_frames = int(ONE_TENTH_SEC * sample_rate)
     slices = int((num_frames - slice_frames) / offset_frames)
 
-    checkpoint = torch.load(TRAINDED_MODEL_PATH)
+    checkpoint = torch.load(TRAINED_MODEL_PATH)
     model = TramsAudioClassifier(ModelConfig())
     model.load_state_dict(checkpoint["state_dict"])
 
@@ -49,3 +50,29 @@ def predict_trams_from_wav(input_wav: Path, output_csv: Path):
             predictions.append(prediction)
 
     print(pd.Series(predictions).value_counts())
+
+
+def validate(validation_split: float, use_cache: bool = True):
+    correct_prediction = 0
+    total_prediction = 0
+
+    checkpoint = torch.load(TRAINED_MODEL_PATH)
+    model = TramsAudioClassifier(ModelConfig())
+    model.load_state_dict(checkpoint["state_dict"])
+
+    dm = TramsDataModule(batch_size=16, validation_split=validation_split)
+    dm.prepare_data(use_cache)
+    dm.setup()
+
+    val_dataloader = dm.val_dataloader()
+
+    with torch.no_grad():
+        for data in val_dataloader:
+            inputs, labels = data["spectrogram"], data["label"]
+            outputs = model(inputs)
+            _, prediction = torch.max(outputs,1)
+            correct_prediction += (prediction == labels).sum().item()
+            total_prediction += prediction.shape[0]
+
+    acc = correct_prediction / total_prediction
+    print(f'Accuracy: {acc:.3f}, Total items: {total_prediction}')
