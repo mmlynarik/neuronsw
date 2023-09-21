@@ -52,7 +52,7 @@ def predict_trams_from_wav(input_wav: Path, output_csv: Path):
     print(pd.Series(predictions).value_counts())
 
 
-def validate(validation_split: float, use_cache: bool = True):
+def validate(validation_split: float, use_cache: bool, max_length_secs: int):
     correct_prediction = 0
     total_prediction = 0
 
@@ -60,8 +60,8 @@ def validate(validation_split: float, use_cache: bool = True):
     model = TramsAudioClassifier(ModelConfig())
     model.load_state_dict(checkpoint["state_dict"])
 
-    dm = TramsDataModule(batch_size=16, validation_split=validation_split)
-    dm.prepare_data(use_cache)
+    dm = TramsDataModule(16, validation_split, max_length_secs, use_cache=use_cache)
+    dm.prepare_data()
     dm.setup()
 
     val_dataloader = dm.val_dataloader()
@@ -70,9 +70,9 @@ def validate(validation_split: float, use_cache: bool = True):
         for data in val_dataloader:
             inputs, labels = data["spectrogram"], data["label"]
             outputs = model(inputs)
-            _, prediction = torch.max(outputs,1)
+            _, prediction = torch.max(outputs, 1)
             correct_prediction += (prediction == labels).sum().item()
             total_prediction += prediction.shape[0]
 
     acc = correct_prediction / total_prediction
-    print(f'Accuracy: {acc:.3f}, Total items: {total_prediction}')
+    print(f"Accuracy: {acc:.3f}, Total items: {total_prediction}")

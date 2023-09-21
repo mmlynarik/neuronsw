@@ -24,6 +24,7 @@ class TramsDataModule(LightningDataModule):
         max_length_secs: int,
         raw_data_dir: Path = RAW_DATA_DIR_TRAIN,
         arrow_data_dir: Path = ARROW_DATA_DIR,
+        use_cache: bool = True,
     ):
         super().__init__()
         self.batch_size = batch_size
@@ -31,10 +32,11 @@ class TramsDataModule(LightningDataModule):
         self.max_length_secs = max_length_secs
         self.raw_data_dir = raw_data_dir
         self.arrow_data_dir = arrow_data_dir
+        self.use_cache = use_cache
 
-    def prepare_data(self, use_cache: bool = True) -> DatasetDict:
+    def prepare_data(self) -> DatasetDict:
         if Path(self.arrow_data_dir / "dataset_dict.json").exists():
-            if use_cache:
+            if self.use_cache:
                 log.info(f"Processed dataset already exists in {self.arrow_data_dir} folder.")
                 return load_from_disk(self.arrow_data_dir)
             else:

@@ -55,6 +55,7 @@ def _get_mel_spectrogram(
 
 
 def load_dataset_from_wav_files() -> DatasetDict:
+    """Generates metadata.jsonl file and then loads wav files into DatasetDict using that metadata."""
     with jsonlines.open(RAW_DATA_DIR_TRAIN / "metadata.jsonl", mode="w") as writer:
         for idx, (root, _, files) in enumerate(os.walk(RAW_DATA_DIR_TRAIN)):
             if idx == 0:
