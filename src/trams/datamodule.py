@@ -21,12 +21,14 @@ class TramsDataModule(LightningDataModule):
         self,
         batch_size: int,
         validation_split: float,
+        max_length_secs: int,
         raw_data_dir: Path = RAW_DATA_DIR_TRAIN,
         arrow_data_dir: Path = ARROW_DATA_DIR,
     ):
         super().__init__()
         self.batch_size = batch_size
         self.validation_split = validation_split
+        self.max_length_secs = max_length_secs
         self.raw_data_dir = raw_data_dir
         self.arrow_data_dir = arrow_data_dir
 
@@ -45,7 +47,7 @@ class TramsDataModule(LightningDataModule):
 
         dataset = load_dataset_from_wav_files()
         dataset = split_dataset(dataset, validation_pct=self.validation_split)
-        dataset = process_dataset(dataset)
+        dataset = process_dataset(dataset, self.max_length_secs)
         return dataset
 
     def setup(self, stage: Optional[str] = None) -> None:

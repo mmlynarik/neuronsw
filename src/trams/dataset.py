@@ -21,9 +21,9 @@ def _add_label_name(batch: Batch, int2str: Callable) -> Batch:
     return {"label_name": [int2str(label) for label in batch["label"]]}
 
 
-def _get_max_frames(dataset: Dataset) -> int:
+def _get_max_frames(dataset: Dataset, max_length_secs: int) -> int:
     sample_rate = dataset["train"]["sample_rate"][0]
-    return int(MAX_LENGTH_SECS * sample_rate)
+    return int(max_length_secs * sample_rate)
 
 
 def _flatten_example_dict(batch: Batch) -> Batch:
@@ -81,10 +81,10 @@ def split_dataset(dataset: DatasetDict, validation_pct: float) -> DatasetDict:
     return DatasetDict({"train": dataset["train"], "validation": dataset["test"]})
 
 
-def process_dataset(dataset: DatasetDict) -> DatasetDict:
+def process_dataset(dataset: DatasetDict, max_length_secs: int) -> DatasetDict:
     train_dataset: Dataset = dataset["train"]
     int2str = train_dataset.features["label"].int2str
-    max_frames = _get_max_frames(dataset)
+    max_frames = _get_max_frames(dataset, max_length_secs)
     sample_rate = train_dataset["sample_rate"][0]
     mel_spectrogram = transforms.MelSpectrogram(sample_rate, n_fft=NUM_FFT, n_mels=NUM_MELS)
     amplitude_transformer = transforms.AmplitudeToDB(top_db=MAX_DB)
