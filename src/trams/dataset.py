@@ -6,6 +6,7 @@ import random
 
 import torchaudio
 import pandas as pd
+import torch as pt
 from torchaudio.backend.common import AudioMetaData
 from torchaudio import transforms
 from datasets import load_dataset, Dataset, DatasetDict
@@ -28,9 +29,33 @@ def _get_max_frames(dataset: Dataset, max_length_secs: int) -> int:
 
 def _flatten_example_dict(batch: Batch) -> Batch:
     return {
-        "audio": [(items["array"]) for items in batch["audio"]],
+        "audio": [items["array"] for items in batch["audio"]],
         "path": [items["path"] for items in batch["audio"]],
     }
+
+
+def _sample_audio_length_for_negatives(batch: Batch, sample_rate: int) -> Batch:
+    batch_size = len(batch["audio"])
+    sampled_lengths = pt.normal(mean=4, std=1, size=(batch_size,))  # 4, 1 = mean, std of audio lengths dist
+    return {
+        "audio": [
+            audio[: int(sampled_length.item() * sample_rate)] if label == 8 else audio
+            for audio, label, sampled_length in zip(batch["audio"], batch["label"], sampled_lengths)
+        ],
+        "num_frames": [int(sampled_length.item() * sample_rate) for sampled_length in sampled_lengths],
+    }
+
+
+def _add_gaussian_white_noise_to_one_audio(audio: list[float], snr: float) -> list[float]:
+    """When mean = 0, std_noise = rms_noise because definition of rms signifies definition of std."""
+    rms_signal = pt.sqrt(pt.mean(pt.tensor(audio) ** 2))
+    rms_noise = pt.sqrt(rms_signal**2 / (pow(10, snr / 10)))  # from definition of signal-to-noise ratio
+    std_noise = rms_noise
+    return (pt.tensor(audio) + pt.normal(0, std_noise, (len(audio),))).tolist()
+
+
+def _add_gaussian_noise(batch: Batch, snr: float) -> Batch:
+    return {"audio": [_add_gaussian_white_noise_to_one_audio(audio, snr) for audio in batch["audio"]]}
 
 
 def _truncate(batch: Batch, max_frames: int) -> Batch:
@@ -82,7 +107,7 @@ def split_dataset(dataset: DatasetDict, validation_pct: float) -> DatasetDict:
     return DatasetDict({"train": dataset["train"], "validation": dataset["test"]})
 
 
-def process_dataset(dataset: DatasetDict, max_length_secs: int) -> DatasetDict:
+def process_dataset(dataset: DatasetDict, max_length_secs: int, snr: float) -> DatasetDict:
     train_dataset: Dataset = dataset["train"]
     int2str = train_dataset.features["label"].int2str
     max_frames = _get_max_frames(dataset, max_length_secs)
@@ -93,6 +118,13 @@ def process_dataset(dataset: DatasetDict, max_length_secs: int) -> DatasetDict:
     dataset = (
         dataset.map(_add_label_name, batched=True, fn_kwargs={"int2str": int2str}, desc="Add label name")
         .map(_flatten_example_dict, batched=True, remove_columns=["audio"], desc="Flatten example dict")
+        .map(
+            _sample_audio_length_for_negatives,
+            batched=True,
+            fn_kwargs={"sample_rate": sample_rate},
+            desc="Sample audio lengths for negatives",
+        )
+        .map(_add_gaussian_noise, batched=True, fn_kwargs={"snr": snr}, desc="Add gaussian white noise")
         .map(_truncate, batched=True, fn_kwargs={"max_frames": max_frames}, desc="Truncate")
         .map(_pad, batched=True, fn_kwargs={"max_frames": max_frames}, desc="Pad")
         .with_format("torch", columns=["audio", "label"])

@@ -49,6 +49,7 @@ model:
 data:
   batch_size: 64
   validation_split: 0.1
-  max_length_secs: 11
+  max_length_secs: 4
+  snr: 5
   use_cache: True
 ckpt_path:

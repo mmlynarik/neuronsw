@@ -22,6 +22,7 @@ class TramsDataModule(LightningDataModule):
         batch_size: int,
         validation_split: float,
         max_length_secs: int,
+        snr: float,
         raw_data_dir: Path = RAW_DATA_DIR_TRAIN,
         arrow_data_dir: Path = ARROW_DATA_DIR,
         use_cache: bool = True,
@@ -30,6 +31,7 @@ class TramsDataModule(LightningDataModule):
         self.batch_size = batch_size
         self.validation_split = validation_split
         self.max_length_secs = max_length_secs
+        self.snr = snr
         self.raw_data_dir = raw_data_dir
         self.arrow_data_dir = arrow_data_dir
         self.use_cache = use_cache
@@ -49,7 +51,7 @@ class TramsDataModule(LightningDataModule):
 
         dataset = load_dataset_from_wav_files()
         dataset = split_dataset(dataset, validation_pct=self.validation_split)
-        dataset = process_dataset(dataset, self.max_length_secs)
+        dataset = process_dataset(dataset, self.max_length_secs, self.snr)
         return dataset
 
     def setup(self, stage: Optional[str] = None) -> None:
@@ -88,7 +90,7 @@ class TramsDataModule(LightningDataModule):
 
 
 def datamodule_sanity_check():
-    dm = TramsDataModule(batch_size=16, validation_split=0.1)
+    dm = TramsDataModule(batch_size=16, validation_split=0.1, max_length_secs=4, snr=5)
     dm.prepare_data()
     dm.setup()
 
