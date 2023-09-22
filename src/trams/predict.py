@@ -52,7 +52,7 @@ def predict_trams_from_wav(input_wav: Path, output_csv: Path):
     print(pd.Series(predictions).value_counts())
 
 
-def validate(validation_split: float, use_cache: bool, max_length_secs: int):
+def validate(validation_split: float, use_cache: bool, max_length_secs: int, snr: float):
     correct_prediction = 0
     total_prediction = 0
 
@@ -60,7 +60,7 @@ def validate(validation_split: float, use_cache: bool, max_length_secs: int):
     model = TramsAudioClassifier(ModelConfig())
     model.load_state_dict(checkpoint["state_dict"])
 
-    dm = TramsDataModule(16, validation_split, max_length_secs, use_cache=use_cache)
+    dm = TramsDataModule(16, validation_split, max_length_secs, snr, use_cache=use_cache)
     dm.prepare_data()
     dm.setup()
 
