@@ -12,7 +12,7 @@ This project uses `Poetry` dependency and package manager to define dependencies
 make poetry
 ```
 
-Then the virtual environment can be installed using the command:
+Then the virtual environment, along with all dependencies can be installed using the command:
 ```
 make venv
 ```
