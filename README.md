@@ -1,6 +1,6 @@
-# Trams classification project
+# Trams audio classification project
 
-## 1. Install Linux packages
+## 1. Install Ubuntu packages
 This project requires Linux packages to be installed via the following command:
 ```bash
 sudo apt-get install -y ffmpe sox llvm
