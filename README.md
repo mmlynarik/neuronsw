@@ -18,4 +18,4 @@ make venv
 ```
 
 ## 3. Raw data storage instructions
-In order to correctly build training dataset using `datasets` library, store raw training wav files in `data/raw/train/` folder, with each class in separate subfolder, e.g. `data/raw/train/Accelerating_2_CKD_Long`. Test files should be placed into `data/raw/test` folder.
+In order to correctly build training dataset using `datasets` library, store raw training wav files in `./data/raw/train/` folder, with each class in separate subfolder, e.g. `./data/raw/train/Accelerating_2_CKD_Long`. Test files should be placed into `data/raw/test` folder.
