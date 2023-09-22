@@ -12,10 +12,10 @@ This project uses `Poetry` dependency and package manager to define dependencies
 make poetry
 ```
 
-Then the virtual environment, along with all dependencies can be installed using the command:
+After cloning the repository, the virtual environment, along with all dependencies can be installed using the command:
 ```
 make venv
 ```
 
-## Raw data storage instructions
-In order to correctly build training dataset using `datasets` library, store raw training wav files in `data/raw/train/` folder, with each class in separate subfolder, e.g. `Accelerating_2_CKD_Long`.
+## 3. Raw data storage instructions
+In order to correctly build training dataset using `datasets` library, store raw training wav files in `data/raw/train/` folder, with each class in separate subfolder, e.g. `data/raw/train/Accelerating_2_CKD_Long`. Test files should be placed into `data/raw/test` folder.
