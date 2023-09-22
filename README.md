@@ -7,7 +7,7 @@ sudo apt-get install -y ffmpe sox llvm
 ```
 
 ## 2. Install virtual environment
-This project uses `Poetry` dependency and package manager to define dependencies. In order to install virtual environment, poetry needs to be installed. If it's not, you can install it through Makefile command:
+This project uses `Poetry` dependency and package manager to define dependencies. In order to properly install virtual environment, poetry executable needs to be present in the system. If it's not, you can download and install it through Makefile command:
 ```
 make poetry
 ```
