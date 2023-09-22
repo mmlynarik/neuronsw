@@ -12,7 +12,7 @@ from torchaudio import transforms
 from datasets import load_dataset, Dataset, DatasetDict
 from IPython.display import display
 
-from trams.config import RAW_DATA_DIR_TRAIN, ARROW_DATA_DIR, MAX_LENGTH_SECS, NUM_FFT, NUM_MELS, MAX_DB
+from trams.config import RAW_DATA_DIR_TRAIN, ARROW_DATA_DIR, NUM_FFT, NUM_MELS, MAX_DB
 
 
 Batch = dict[str, Any]
