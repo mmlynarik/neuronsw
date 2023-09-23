@@ -17,13 +17,13 @@ from trams.config import (
     TRAINED_MODEL_PATH,
     TRAMS_LABELS_NAMES,
 )
-from trams.model import TramsAudioClassifier, ModelConfig
+from trams.model import TramsAudioClassifier
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--input-wav", type=str, help="Input wav file path")
-    parser.add_argument("--output-csv", type=str, help="Output csv file")
+    parser.add_argument("--output-csv", type=str, help="Output csv file", default="./output.csv")
     args = parser.parse_args()
     return args
 
