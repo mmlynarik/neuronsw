@@ -29,6 +29,7 @@ def parse_args() -> argparse.Namespace:
 
 
 def get_output_mask(predictions: list[tuple[float, int]]) -> list[bool]:
+    """If two consecutive slices have the same tram prediction, they are considered the same tram."""
     output_mask = [True]
     idx = 0
     while idx + 1 < len(predictions):
