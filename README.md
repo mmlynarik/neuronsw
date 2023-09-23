@@ -19,3 +19,16 @@ make venv
 
 ## 3. Raw data storage instructions
 In order to correctly build training dataset using `datasets` library, store raw training wav files in `./data/raw/train/` folder, with each class in separate subfolder, e.g. `./data/raw/train/Accelerating_2_CKD_Long`. Test files should be placed into `data/raw/test` folder.
+
+## 4. Train model
+To train model, the `WANDB_API_KEY` environment variable must be set to WANDB token used for logging the experiment. Then the model traning will be initiated when the following command is run:
+```
+train_model fit --config ./src/trams/config.yaml
+```
+
+
+## 5. Inference on test set:
+To test the model on test wav file, run the following script specifying the input wav file location:
+```
+python -m trams.predict --input-wav ./data/raw/test/tram-2018-12-07-15-32-08.wav
+```
