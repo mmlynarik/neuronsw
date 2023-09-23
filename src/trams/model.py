@@ -87,21 +87,27 @@ class TramsAudioClassifier(LightningModule):
         super().__init__()
         self.learning_rate = config.learning_rate
         self.model = AudioClassifier(config)
+        self.metrics = nn.ModuleDict({"accuracy": Accuracy("multiclass", num_classes=config.num_classes)})
         self.save_hyperparameters()
-        self.metrics = {"accuracy": Accuracy("multiclass", num_classes=config.num_classes)}
-        # .to(device=config.device)
 
     def forward(self, batch: pt.Tensor) -> pt.Tensor:
         return self.model(batch)
+
+    def log_metrics(
+        self, stage: str, preds: pt.Tensor, labels: pt.Tensor, on_step: bool, on_epoch: bool, logger: bool
+    ):
+        for name, metric in self.metrics.items():
+            value = metric(preds, labels)
+            self.log(f"{stage}_{name}", value=value, on_step=on_step, on_epoch=on_epoch, logger=logger)
 
     def training_step(self, batch: dict[str, Any], _: int) -> STEP_OUTPUT:
         logits = self.model(batch["spectrogram"])
         labels = batch["label"]
         loss = nn.functional.cross_entropy(logits, labels)
         _, preds = pt.max(logits, 1)
-        accuracy = self.metrics["accuracy"](preds, labels)
+
         self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
-        self.log("train_accuracy", accuracy, on_step=False, on_epoch=True, logger=True)
+        self.log_metrics("train", preds, labels, on_step=False, on_epoch=True, logger=True)
         return loss
 
     def validation_step(self, batch: dict[str, Any], _: int) -> STEP_OUTPUT:
@@ -109,9 +115,9 @@ class TramsAudioClassifier(LightningModule):
         labels = batch["label"]
         loss = nn.functional.cross_entropy(logits, labels)
         _, preds = pt.max(logits, 1)
-        accuracy = self.metrics["accuracy"](preds, labels)
+
         self.log("val_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
-        self.log("val_accuracy", accuracy, on_step=False, on_epoch=True, logger=True)
+        self.log_metrics("val", preds, labels, on_step=False, on_epoch=True, logger=True)
         return loss
 
     def test_step(self, batch: dict[str, Any], _: int) -> STEP_OUTPUT:
