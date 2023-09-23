@@ -124,7 +124,6 @@ def process_dataset(dataset: DatasetDict, max_length_secs: int, snr: float) -> D
             fn_kwargs={"sample_rate": sample_rate},
             desc="Sample audio lengths for negatives",
         )
-        .map(_add_gaussian_noise, batched=True, fn_kwargs={"snr": snr}, desc="Add gaussian white noise")
         .map(_truncate, batched=True, fn_kwargs={"max_frames": max_frames}, desc="Truncate")
         .map(_pad, batched=True, fn_kwargs={"max_frames": max_frames}, desc="Pad")
         .with_format("torch", columns=["audio", "label"])
