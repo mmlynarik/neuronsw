@@ -26,7 +26,7 @@ To train model, the `WANDB_API_KEY` environment variable must be set to WANDB to
 train_model fit --config ./src/trams/config.yaml
 ```
 
-## 5. Inference on test set:
+## 5. Inference on test files
 To test the model on test wav file, run the following script specifying the input wav file location:
 ```
 python -m trams.predict --input-wav ./data/raw/test/tram-2018-12-07-15-32-08.wav
