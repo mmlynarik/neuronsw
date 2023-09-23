@@ -15,7 +15,7 @@ from trams.config import (
     MAX_LENGTH_SECS,
     ONE_TENTH_SEC,
     TRAINED_MODEL_PATH,
-    LABELS_NAMES_MAP,
+    TRAMS_LABELS_NAMES,
 )
 from trams.model import TramsAudioClassifier, ModelConfig
 
@@ -58,20 +58,18 @@ def predict_trams_from_wav(input_wav: Path, output_csv: Path):
     slice_frames = int(MAX_LENGTH_SECS * sample_rate)
     offset_frames = int(ONE_TENTH_SEC * sample_rate)
 
-    checkpoint = pt.load(TRAINED_MODEL_PATH)
-    model = TramsAudioClassifier(ModelConfig())
-    model.load_state_dict(checkpoint["state_dict"])
+    model = TramsAudioClassifier.load_from_checkpoint(TRAINED_MODEL_PATH)
 
     predictions = []
-    model.eval()
+    model.to(device="cpu").eval()
     with pt.no_grad():
         position = 0
         while position <= num_frames - slice_frames:
             slice = audio[:, position : position + slice_frames]
-            spectrogram = amplitude_transformer(mel_spectrogram(slice))
-            output: pt.Tensor = model(spectrogram)
+            spectrogram: pt.Tensor = amplitude_transformer(mel_spectrogram(slice))
+            output = model(spectrogram)
             prediction = pt.argmax(output.softmax(dim=1), dim=1).item()
-            if prediction == 8:
+            if prediction == model.hparams.config.num_classes - 1:
                 position += offset_frames
             else:
                 predictions.append((position / sample_rate, prediction))
@@ -79,7 +77,7 @@ def predict_trams_from_wav(input_wav: Path, output_csv: Path):
 
     output_mask = get_output_mask(predictions)
     df = pd.DataFrame(predictions, columns=["seconds_offset", "label"])[output_mask].reset_index(drop=True)
-    one_hot = pd.DataFrame(pt.nn.functional.one_hot(pt.tensor(df["label"])),columns=LABELS_NAMES_MAP.values())
+    one_hot = pd.DataFrame(pt.nn.functional.one_hot(pt.tensor(df["label"])),columns=TRAMS_LABELS_NAMES)
     df = pd.merge(df, one_hot, left_index=True, right_index=True).drop(columns=["label"])
     df.to_csv(output_csv, index=False)
 

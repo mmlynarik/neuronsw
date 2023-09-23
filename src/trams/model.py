@@ -88,7 +88,8 @@ class TramsAudioClassifier(LightningModule):
         self.learning_rate = config.learning_rate
         self.model = AudioClassifier(config)
         self.save_hyperparameters()
-        self.metrics = {"accuracy": Accuracy("multiclass", num_classes=config.num_classes).to(device='cuda')}
+        self.metrics = {"accuracy": Accuracy("multiclass", num_classes=config.num_classes)}
+        # .to(device=config.device)
 
     def forward(self, batch: pt.Tensor) -> pt.Tensor:
         return self.model(batch)
