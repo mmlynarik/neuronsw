@@ -14,3 +14,14 @@ NUM_MELS = 64
 MAX_DB = 90
 
 TRAINED_MODEL_PATH = ROOT_DIR / "src" / "trams" / "trained_model" / "model.ckpt"
+
+LABELS_NAMES_MAP = {
+    0: "accelerating_1_New",
+    1: "accelerating_2_CKD_Long",
+    2: "accelerating_3_CKD_Short",
+    3: "accelerating_4_Old",
+    4: "braking_1_New",
+    5: "braking_2_CKD_Long",
+    6: "braking_3_CKD_Short",
+    7: "braking_4_Old",
+}
