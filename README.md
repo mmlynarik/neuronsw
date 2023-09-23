@@ -20,6 +20,7 @@ make venv
 ## 3. Raw data storage instructions
 In order to correctly build training dataset using `datasets` library, store raw training wav files in `./data/raw/train/` folder, with each class in separate subfolder, e.g. `./data/raw/train/Accelerating_2_CKD_Long`. Test files should be placed into `data/raw/test` folder.
 
+
 ## 4. Train model
 To train model, the `WANDB_API_KEY` environment variable must be set to WANDB token used for logging the experiment. Then the model traning will be initiated when the following command is run:
 ```
