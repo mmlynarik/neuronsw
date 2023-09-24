@@ -1,4 +1,4 @@
-# Trams audio classification project
+# Prague Trams Audio Classification Project
 
 ## 1. Install Ubuntu packages
 This project requires Linux packages to be installed via the following command:
