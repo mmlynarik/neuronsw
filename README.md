@@ -1,4 +1,4 @@
-# Trams audio classification project
+# Prague Trams Audio Classification Project
 
 ## 1. Install Ubuntu packages
 This project requires Linux packages to be installed via the following command:
@@ -22,7 +22,7 @@ In order to correctly build training dataset using `datasets` library, store raw
 
 
 ## 4. Train model
-To train model, the `WANDB_API_KEY` environment variable must be set to WANDB token used for logging the experiment. Then the model traning will be initiated when the following command is run:
+To train model, the `WANDB_API_KEY` environment variable must be set to W&B account token, which is used during training for logging the metrics and experiment artifacts. [Weights & Biases (W&B)](https://www.wandb.ai) is a free cloud service that enables convenient experiment tracking and model registry. Use `.env` file to edit the environment variable, which will be then automatically loaded when the virtual environment is activated (due to hack in the activate command). Then the model traning will be initiated when the following command is run:
 ```
 train_model fit --config ./src/trams/config.yaml
 ```
