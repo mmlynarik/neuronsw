@@ -15,7 +15,7 @@ MAX_DB = 90
 
 TRAINED_MODEL_PATH = ROOT_DIR / "src" / "trams" / "trained_model" / "model.ckpt"
 
-TRAMS_LABELS_NAMES = [
+LABELS_NAMES = [
     "accelerating_1_New",
     "accelerating_2_CKD_Long",
     "accelerating_3_CKD_Short",
@@ -24,4 +24,6 @@ TRAMS_LABELS_NAMES = [
     "braking_2_CKD_Long",
     "braking_3_CKD_Short",
     "braking_4_Old",
+    "negative",
 ]
+TRAMS_LABELS_NAMES = LABELS_NAMES[:-1]
