@@ -78,7 +78,7 @@ def predict_trams_from_wav(input_wav: Path, output_csv: Path):
 
     output_mask = get_output_mask(predictions)
     df = pd.DataFrame(predictions, columns=["seconds_offset", "label"])[output_mask].reset_index(drop=True)
-    one_hot = pd.DataFrame(pt.nn.functional.one_hot(pt.tensor(df["label"])),columns=TRAMS_LABELS_NAMES)
+    one_hot = pd.DataFrame(pt.nn.functional.one_hot(pt.tensor(df["label"])), columns=TRAMS_LABELS_NAMES)
     df = pd.merge(df, one_hot, left_index=True, right_index=True).drop(columns=["label"])
     df.to_csv(output_csv, index=False)
 
