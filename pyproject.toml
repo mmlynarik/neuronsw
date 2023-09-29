@@ -11,20 +11,19 @@ torch = "2.0.0"
 torchaudio = "2.0.1"
 torchmetrics = "1.1.0"
 lightning = "2.0.3"
-transformers = "4.30.2"
 wandb = "0.15.9"
 huggingface-download-cli = "1.0.3"
 datasets = {version = "2.14.0", extras = ["audio"]}
 numba = "0.56.0"
-jsonlines = "^4.0.0"
-ipython = "^8.15.0"
-ipykernel = "^6.25.2"
-ipywidgets = "^8.1.0"
-plotly = "^5.16.1"
-nbformat = "^5.9.2"
+jsonlines = "4.0.0"
+ipython = "8.15.0"
+ipykernel = "6.25.2"
+ipywidgets = "8.1.0"
+plotly = "5.16.1"
+nbformat = "5.9.2"
 src = {path = "src", develop = true}
-jsonargparse = {extras = ["signatures"], version = "^4.24.1"}
-matplotlib = "^3.8.0"
+jsonargparse = {extras = ["signatures"], version = "4.24.1"}
+matplotlib = "3.8.0"
 
 [tool.poetry.group.dev.dependencies]
 black = "23.3.0"
