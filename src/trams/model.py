@@ -106,7 +106,7 @@ class TramsAudioClassifier(LightningModule):
         return self.model(batch)
 
     def log_metrics(self, stage: str, preds: pt.Tensor, labels: pt.Tensor, on_step: bool, on_epoch: bool):
-        """Log scalar-valued metrics into logger and progress bar."""
+        """Log scalar-valued metrics into selected logger."""
         for name, metric in self.metrics.items():
             if stage in name:
                 metric(preds, labels)
