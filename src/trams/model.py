@@ -11,7 +11,8 @@ from lightning.pytorch.loggers.wandb import WandbLogger
 from lightning.pytorch.utilities.types import STEP_OUTPUT
 from torchmetrics.classification import MulticlassAccuracy, MulticlassConfusionMatrix
 
-from trams.config import LABELS_NAMES
+from trams.config import LABELS_NAMES_SHORT
+from trams.utils import plot_confusion_matrix
 
 
 Device = Literal["cuda", "cpu"]
@@ -133,9 +134,10 @@ class TramsAudioClassifier(LightningModule):
         return loss
 
     def on_validation_epoch_end(self):
+        confusion_matrix = self.confusion_matrix.compute()
         fig, ax = plt.subplots()
-        self.confusion_matrix.plot(ax=ax, add_text=True, labels=LABELS_NAMES)
-        wandb.log({"plot": plt})
+        plot_confusion_matrix(confusion_matrix, ax=ax, labels=LABELS_NAMES_SHORT)
+        wandb.log({"plot": plt, "trainer/global_step": self.trainer.current_epoch})
         plt.close(fig)
         self.confusion_matrix.reset()
 

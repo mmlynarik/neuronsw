@@ -26,4 +26,17 @@ LABELS_NAMES = [
     "braking_4_Old",
     "negative",
 ]
+
 TRAMS_LABELS_NAMES = LABELS_NAMES[:-1]
+
+LABELS_NAMES_SHORT = [
+    "ACC-New",
+    "ACC-CKD-Long",
+    "ACC-CKD_Short",
+    "ACC-Old",
+    "BRK-New",
+    "BRK-CKD-Long",
+    "BRK-CKD-Short",
+    "BRK-Old",
+    "NEG"
+]
