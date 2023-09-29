@@ -27,7 +27,13 @@ To train model, the `WANDB_API_KEY` environment variable must be set to W&B acco
 train_model fit --config ./src/trams/config.yaml
 ```
 
-## 5. Inference on test files
+## 5. Track experiments and check logged performance metrics, code and artifacts
+Each experiment can be tracked using wandb service, by logging to your account. This project experiments are archived at
+```
+https://wandb.ai/mmlynarik/trams-audio-classification/workspace?workspace=user-mmlynarik
+```
+
+## 6. Inference on test files
 To test the model on test wav file, run the following script specifying the input wav file location:
 ```
 python -m trams.predict --input-wav ./data/raw/test/tram-2018-12-07-15-32-08.wav
