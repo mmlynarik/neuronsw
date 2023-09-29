@@ -74,8 +74,8 @@ def plot_confusion_matrix(
         ax.set_ylabel("Actual", fontsize=15)
         ax.set_xticks(list(range(n_classes)))
         ax.set_yticks(list(range(n_classes)))
-        ax.set_xticklabels(labels, rotation=45, fontsize=8)
-        ax.set_yticklabels(labels, rotation=0, fontsize=8)
+        ax.set_xticklabels(labels, rotation=45, fontsize=8.5)
+        ax.set_yticklabels(labels, rotation=0, fontsize=8.5)
 
         if add_text:
             for ii, jj in product(range(n_classes), range(n_classes)):

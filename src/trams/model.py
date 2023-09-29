@@ -135,9 +135,9 @@ class TramsAudioClassifier(LightningModule):
 
     def on_validation_epoch_end(self):
         confusion_matrix = self.confusion_matrix.compute()
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(10, 10))
         plot_confusion_matrix(confusion_matrix, ax=ax, labels=LABELS_NAMES_SHORT)
-        wandb.log({"plot": plt, "trainer/global_step": self.trainer.current_epoch})
+        wandb.log({"plot": plt, "epoch": self.trainer.current_epoch})
         plt.close(fig)
         self.confusion_matrix.reset()
 
