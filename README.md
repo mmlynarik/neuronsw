@@ -29,7 +29,7 @@ train_model fit --config ./src/trams/config.yaml
 
 ## 5. Track experiments and check logged performance metrics, code and artifacts
 Each experiment can be tracked using wandb service, by logging to your account. This project experiments are archived at 
-[my account](https://wandb.ai/mmlynarik/trams-audio-classification/workspace?workspace=user-mmlynarik)
+[mmlynarik](https://wandb.ai/mmlynarik/trams-audio-classification/workspace?workspace=user-mmlynarik) account.
 
 ## 6. Inference on test files
 To test the model on test wav file, run the following script specifying the input wav file location:
