@@ -2,12 +2,16 @@ import os
 from dataclasses import dataclass
 from typing import Literal, Any
 
+import wandb
 import torch as pt
+import matplotlib.pyplot as plt
 from torch import nn
 from lightning.pytorch import LightningModule
 from lightning.pytorch.loggers.wandb import WandbLogger
 from lightning.pytorch.utilities.types import STEP_OUTPUT
-from torchmetrics import Accuracy
+from torchmetrics.classification import MulticlassAccuracy, MulticlassConfusionMatrix
+
+from trams.config import LABELS_NAMES
 
 
 Device = Literal["cuda", "cpu"]
@@ -85,29 +89,36 @@ class TramsAudioClassifier(LightningModule):
 
     def __init__(self, config: ModelConfig):
         super().__init__()
+        num_classes = config.num_classes
         self.learning_rate = config.learning_rate
         self.model = AudioClassifier(config)
-        self.metrics = nn.ModuleDict({"accuracy": Accuracy("multiclass", num_classes=config.num_classes)})
+        self.metrics = nn.ModuleDict(
+            {
+                "train_accuracy": MulticlassAccuracy(num_classes),
+                "val_accuracy": MulticlassAccuracy(num_classes),
+            }
+        )
+        self.confusion_matrix = MulticlassConfusionMatrix(num_classes)
         self.save_hyperparameters()
 
     def forward(self, batch: pt.Tensor) -> pt.Tensor:
         return self.model(batch)
 
-    def log_metrics(
-        self, stage: str, preds: pt.Tensor, labels: pt.Tensor, on_step: bool, on_epoch: bool, logger: bool
-    ):
+    def log_metrics(self, stage: str, preds: pt.Tensor, labels: pt.Tensor, on_step: bool, on_epoch: bool):
+        """Log scalar-valued metrics into logger and progress bar."""
         for name, metric in self.metrics.items():
-            value = metric(preds, labels)
-            self.log(f"{stage}_{name}", value=value, on_step=on_step, on_epoch=on_epoch, logger=logger)
+            if stage in name:
+                metric(preds, labels)
+                self.log(name, value=metric, on_step=on_step, on_epoch=on_epoch)
 
     def training_step(self, batch: dict[str, Any], _: int) -> STEP_OUTPUT:
         logits = self.model(batch["spectrogram"])
         labels = batch["label"]
         loss = nn.functional.cross_entropy(logits, labels)
-        _, preds = pt.max(logits, 1)
+        _, preds = pt.max(logits, dim=1)
 
-        self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
-        self.log_metrics("train", preds, labels, on_step=False, on_epoch=True, logger=True)
+        self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True)
+        self.log_metrics("train", preds, labels, on_step=True, on_epoch=True)
         return loss
 
     def validation_step(self, batch: dict[str, Any], _: int) -> STEP_OUTPUT:
@@ -116,9 +127,17 @@ class TramsAudioClassifier(LightningModule):
         loss = nn.functional.cross_entropy(logits, labels)
         _, preds = pt.max(logits, 1)
 
-        self.log("val_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
-        self.log_metrics("val", preds, labels, on_step=False, on_epoch=True, logger=True)
+        self.log("val_loss", loss, on_step=True, on_epoch=True, prog_bar=True)
+        self.log_metrics("val", preds, labels, on_step=True, on_epoch=True)
+        self.confusion_matrix.update(preds, labels)
         return loss
+
+    def on_validation_epoch_end(self):
+        fig, ax = plt.subplots()
+        self.confusion_matrix.plot(ax=ax, add_text=True, labels=LABELS_NAMES)
+        wandb.log({"plot": plt})
+        plt.close(fig)
+        self.confusion_matrix.reset()
 
     def test_step(self, batch: dict[str, Any], _: int) -> STEP_OUTPUT:
         pass
