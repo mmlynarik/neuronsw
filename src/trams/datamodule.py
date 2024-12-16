@@ -98,7 +98,3 @@ def datamodule_sanity_check():
         if step == 0:
             print(batch)
             break
-
-
-if __name__ == "__main__":
-    datamodule_sanity_check()
